@@ -1,5 +1,4 @@
-from flask import Flask
-from flask import request
+from flask import Flask, request, render_template
 from config import Config
 
 app = Flask(__name__)
@@ -15,9 +14,15 @@ from models import Product
 from schemas import products_schema
 from schemas import product_schema
 
-@app.route('/hello')
-def hello():
-    return "Hello World!"
+@app.route('/')
+def home():
+    products = db.session.query(Product).all()
+    return render_template('home.html', products=products)
+
+@app.route('/<int:id>')
+def product_html(id):
+    product = db.session.query(Product).get(id)
+    return render_template('product.html', product=product)
 
 # CREATE
 @app.route('/products', methods=['POST'])
