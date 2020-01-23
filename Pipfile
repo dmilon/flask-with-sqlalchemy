@@ -14,6 +14,7 @@ flask-script = "*"
 psycopg2 = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
+flask-admin = "*"
 
 [requires]
 python_version = "3.7"
