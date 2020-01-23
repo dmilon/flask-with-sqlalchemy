@@ -15,6 +15,7 @@ psycopg2 = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 flask-admin = "*"
+celery = {extras = ["redis"],version = "*"}
 
 [requires]
 python_version = "3.7"
