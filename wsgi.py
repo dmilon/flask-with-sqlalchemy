@@ -1,4 +1,6 @@
 from flask import Flask
+from flask import request
+from flask import abort
 from config import Config
 
 app = Flask(__name__)
@@ -12,12 +14,64 @@ ma = Marshmallow(app)
 
 from models import Product
 from schemas import products_schema
+from schemas import product_schema
 
 @app.route('/hello')
 def hello():
     return "Hello World!"
 
+# CREATE
+@app.route('/products', methods=['POST'])
+def create_product():
+    if "name" in request.get_json():
+        name = request.get_json()["name"]
+        product = Product()
+        product.name = name
+        db.session.add(product)
+        db.session.commit()
+        return (product_schema.jsonify(product), 201)
+    else:
+        return ('', 400)
+
+# READ ALL
 @app.route('/products')
-def products():
-    products = db.session.query(Product).all() # SQLAlchemy request => 'SELECT * FROM products'
-    return products_schema.jsonify(products)
+def read_products():
+    products = db.session.query(Product).all()
+    return (products_schema.jsonify(products), 200)
+
+# READ ONE
+@app.route('/products/<int:id>')
+def read_product(id):
+    product = db.session.query(Product).get(id)
+    if product:
+        return (product_schema.jsonify(product), 200)
+    else:
+        return ('', 404)
+
+# UPDATE
+@app.route('/products/<int:id>', methods=["PUT", "PATCH"])
+def update_product(id):
+    product = db.session.query(Product).get(id)
+    if product and "name" in request.get_json():
+        name = request.get_json()["name"]
+        product.name = name
+        db.session.commit()
+        return ('', 204)
+    else:
+        return ('', 422)
+
+# DELETE
+@app.route('/products/<int:id>', methods=["DELETE"])
+def delete_product(id):
+    product = db.session.query(Product).get(id)
+    if product:
+        db.session.delete(product)
+        db.session.commit()
+        return ('', 204)
+    else:
+        return ('', 404)
+
+
+
+
+
