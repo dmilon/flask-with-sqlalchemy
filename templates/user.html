@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <a href="{{ url_for('home') }}">← Back to home</a>
+
+  <h1>{{ user.username }}</h1>
+  <p>{{ user.email }}</p>
+
+  <!-- What other columns do you have in the `products` table? Use them here! -->
+{% endblock %}

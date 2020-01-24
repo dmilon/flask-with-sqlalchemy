@@ -12,13 +12,21 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 from models import Product
+from models import User
 from schemas import products_schema
 from schemas import product_schema
+
+from flask.login import LoginManager, login_required, login_user, logout_user
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
 
 admin = Admin(app, template_mode='bootstrap3')
 admin.add_view(ModelView(Product, db.session))
 
 @app.route('/')
+@login_required
 def home():
     products = db.session.query(Product).all()
     return render_template('home.html', products=products)
@@ -27,6 +35,11 @@ def home():
 def product_html(id):
     product = db.session.query(Product).get(id)
     return render_template('product.html', product=product)
+
+@app.route('/users/<int:id>')
+def get_user(id):
+    user = db.session.query(User).get(id)
+    return render_template('user.html', user=user)
 
 # CREATE
 @app.route('/products', methods=['POST'])
@@ -81,8 +94,5 @@ def delete_product(id):
         return ('', 204)
     else:
         return ('', 404)
-
-
-
 
 
